@@ -47,6 +47,13 @@ static int quit_it(adbus_CbData* data)
     return 0;
 }
 
+static int a_signal(adbus_CbData *d)
+{
+    printf("Received ASignal\n");
+
+    return 0;
+}
+
 static adbus_ssize_t send_it(void* d, adbus_Message* m)
 {
     return send(*(adbus_Socket*) d, m->data, m->size, 0);
@@ -94,6 +101,16 @@ int main(void)
     adbus_msg_u32(f.msg, 0);
     adbus_call_send(p, &f);
     adbus_proxy_free(p);
+
+    /* Register a callback for the inbound ASignal */
+    adbus_Match match;
+    adbus_match_init(&match);
+    match.addMatchToBusDaemon = 1;
+    match.type      = ADBUS_MSG_SIGNAL;
+    match.path      = "/";
+    match.member    = "ASignal";
+    match.callback  = &a_signal;
+    adbus_conn_addmatch(c, &match);
 
     /* Wait for incoming Quit method call */
     while(!quit) {
