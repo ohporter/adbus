@@ -72,6 +72,8 @@ int main(void)
     adbus_Interface* i = adbus_iface_new("com.konsulko.ucdbus.Simple", -1);
     adbus_Member* mbr = adbus_iface_addmethod(i, "Quit", -1);
     adbus_mbr_setmethod(mbr, &quit_it, NULL);
+    mbr = adbus_iface_addsignal(i, "Status", -1);
+    adbus_mbr_argsig(mbr, "u", -1);
 
     adbus_Bind b;
     adbus_bind_init(&b);
@@ -93,6 +95,7 @@ int main(void)
     adbus_call_send(p, &f);
     adbus_proxy_free(p);
 
+    /* Wait for incoming Quit method call */
     while(!quit) {
         char* dest = adbus_buf_recvbuf(buf, RECV_SIZE);
         adbus_ssize_t recvd = recv(s, dest, RECV_SIZE, 0);
@@ -103,6 +106,13 @@ int main(void)
         if (adbus_conn_parse(c, buf))
             abort();
     }
+
+    /* Emit Status signal, 0 is down */
+    adbus_Signal *status = adbus_sig_new(mbr);
+    adbus_sig_bind(status, c, "/", -1);
+    adbus_MsgFactory* msg = adbus_sig_msg(status);
+    adbus_msg_u32(msg, 0);
+    adbus_sig_emit(status);
 
     adbus_buf_free(buf);
     adbus_iface_free(i);
