@@ -26,43 +26,52 @@
 #include <adbus.h>
 #include <string.h>
 #include <stdio.h>
-#ifdef _WIN32
-#   include <windows.h>
-#else
-#   include <sys/socket.h>
-#endif
-
-#undef interface
-
-static int quit = 0;
-
-static int Quit(adbus_CbData* data)
-{
-    adbus_check_end(data);
-    quit = 1;
-    return 0;
-}
-
-static adbus_ssize_t Send(void* d, adbus_Message* m)
-{ return send(*(adbus_Socket*) d, m->data, m->size, 0); }
+#include <sys/socket.h>
 
 #define RECV_SIZE 64 * 1024
 
+static int quit = 0;
+
+static void log_it(const char *str, size_t size)
+{
+    printf("%s\n", str);
+
+    return;
+}
+
+static int quit_it(adbus_CbData* data)
+{
+    adbus_check_end(data);
+    quit = 1;
+
+    return 0;
+}
+
+static adbus_ssize_t send_it(void* d, adbus_Message* m)
+{
+    return send(*(adbus_Socket*) d, m->data, m->size, 0);
+}
+
 int main(void)
 {
-    adbus_Buffer* buf = adbus_buf_new();
-    adbus_Socket s = adbus_sock_connect(ADBUS_SESSION_BUS);
+    adbus_Buffer* buf;
+    adbus_Socket s;
+
+    adbus_set_logger((adbus_LogCallback)log_it);
+
+    buf = adbus_buf_new();
+    s = adbus_sock_connect(ADBUS_SESSION_BUS);
     if (s == ADBUS_SOCK_INVALID || adbus_sock_cauth(s, buf))
         abort();
 
     adbus_ConnectionCallbacks cbs = {};
-    cbs.send_message = &Send;
+    cbs.send_message = &send_it;
 
     adbus_Connection* c = adbus_conn_new(&cbs, &s);
 
-    adbus_Interface* i = adbus_iface_new("nz.co.foobar.adbus.SimpleTest", -1);
+    adbus_Interface* i = adbus_iface_new("com.konsulko.ucdbus.Simple", -1);
     adbus_Member* mbr = adbus_iface_addmethod(i, "Quit", -1);
-    adbus_mbr_setmethod(mbr, &Quit, NULL);
+    adbus_mbr_setmethod(mbr, &quit_it, NULL);
 
     adbus_Bind b;
     adbus_bind_init(&b);
@@ -71,6 +80,18 @@ int main(void)
     adbus_conn_bind(c, &b);
 
     adbus_conn_connect(c, NULL, NULL);
+
+    /* Register the Simple service name on the message bus */
+    adbus_State* state = adbus_state_new();
+    adbus_Proxy* p = adbus_proxy_new(state);
+    adbus_proxy_init(p, c, "org.freedesktop.DBus", -1, "/", -1);
+    adbus_Call f;
+    adbus_call_method(p, &f, "RequestName", -1);
+    adbus_msg_setsig(f.msg, "su", -1);
+    adbus_msg_string(f.msg, "com.konsulko.ucdbus.Simple", -1);
+    adbus_msg_u32(f.msg, 0);
+    adbus_call_send(p, &f);
+    adbus_proxy_free(p);
 
     while(!quit) {
         char* dest = adbus_buf_recvbuf(buf, RECV_SIZE);
