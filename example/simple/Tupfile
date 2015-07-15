@@ -1,2 +1,0 @@
-include_rules
-: foreach *.c |> !c99 |> %B.o

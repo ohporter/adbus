@@ -1,5 +1,0 @@
-.gitignore
-
-include qt.tup
-include gcc.tup
-
