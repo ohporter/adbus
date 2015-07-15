@@ -1,6 +1,6 @@
 /* vim: et sts=4 ts=4 sw=4: */
 
-#include "dmem/string.h"
+#include "string.h"
 
 #include <stdarg.h>
 #include <stdio.h>

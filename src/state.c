@@ -26,7 +26,7 @@
 #define ADBUS_LIBRARY
 #include "misc.h"
 
-#include "dmem/list.h"
+#include "list.h"
 
 /** \struct adbus_State
  *  \brief Helper class to manage connection services (binds, matches and

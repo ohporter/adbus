@@ -29,7 +29,7 @@
 #include "connection.h"
 #include "misc.h"
 
-#include "dmem/vector.h"
+#include "vector.h"
 
 #include <assert.h>
 #include <string.h>

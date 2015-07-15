@@ -35,8 +35,8 @@
 
 #include <adbus.h>
 
-#include "dmem/hash.h"
-#include "dmem/string.h"
+#include "hash.h"
+#include "string.h"
 
 #include <string.h>
 

@@ -5,7 +5,7 @@
 
 #include "common.h"
 
-#include "dmem/vector.h"
+#include "vector.h"
 #include <string.h>
 #include <stdarg.h>
 

@@ -1,5 +1,5 @@
 /* vim: et sts=4 ts=4 sw=4: */
-#include "dmem/istring.h"
+#include "istring.h"
 
 void dis_cat_n(d_IString* s, const char* str, size_t sz)
 {

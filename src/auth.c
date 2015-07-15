@@ -27,8 +27,8 @@
 #include "misc.h"
 #include "sha1.h"
 
-#include "dmem/string.h"
-#include "dmem/queue.h"
+#include "string.h"
+#include "queue.h"
 
 #include <adbus.h>
 #include <stdio.h>

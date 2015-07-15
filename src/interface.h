@@ -26,8 +26,8 @@
 #pragma once
 
 #include "misc.h"
-#include "dmem/hash.h"
-#include "dmem/vector.h"
+#include "hash.h"
+#include "vector.h"
 #include <adbus.h>
 
 // ----------------------------------------------------------------------------

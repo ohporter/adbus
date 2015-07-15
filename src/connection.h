@@ -26,10 +26,10 @@
 #pragma once
 
 #include "misc.h"
-#include "dmem/hash.h"
-#include "dmem/vector.h"
-#include "dmem/string.h"
-#include "dmem/list.h"
+#include "hash.h"
+#include "vector.h"
+#include "string.h"
+#include "list.h"
 #include <setjmp.h>
 #include <stdint.h>
 

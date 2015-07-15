@@ -26,7 +26,7 @@
 /*
   An example:
 
-#include "dmem/hash.h"
+#include "hash.h"
 DHASH_MAP_INIT_INT(32, char)
 int main() {
     int ret, is_missing;

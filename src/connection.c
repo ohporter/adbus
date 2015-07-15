@@ -28,8 +28,8 @@
 #include "interface.h"
 #include "message.h"
 
-#include "dmem/vector.h"
-#include "dmem/string.h"
+#include "vector.h"
+#include "string.h"
 
 #include <assert.h>
 

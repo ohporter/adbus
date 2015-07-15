@@ -27,11 +27,11 @@
 
 #include "misc.h"
 
-#include "dmem/hash.h"
-#include "dmem/list.h"
-#include "dmem/queue.h"
-#include "dmem/string.h"
-#include "dmem/vector.h"
+#include "hash.h"
+#include "list.h"
+#include "queue.h"
+#include "string.h"
+#include "vector.h"
 
 #include <adbus.h>
 
