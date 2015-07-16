@@ -1,6 +1,7 @@
 /* vim: ts=4 sw=4 sts=4 et
  *
  * Copyright (c) 2009 James R. McKaskill
+ * Copyright 2015 Konsulko Group, Matt Porter <mporter@konsulko.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -28,7 +29,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 
-#define RECV_SIZE 64 * 1024
+#define RECV_SIZE 1024
 
 static int quit = 0;
 
