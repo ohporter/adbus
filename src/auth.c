@@ -187,69 +187,18 @@ DQUEUE_INIT(char, char);
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef _WIN32
-#define WINVER 0x0500	// Allow use of features specific to Windows 2000 or later.
-#define _WIN32_WINNT 0x0501	// Allow use of features specific to Windows XP or later.
-#include <malloc.h>
-#include <windows.h>
-#include <sddl.h>
-
-static void LocalId(d_String* id)
-{
-    HANDLE process_token = NULL;
-    TOKEN_USER *token_user = NULL;
-    DWORD n;
-    PSID psid;
-    LPTSTR stringsid;
-
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &process_token))
-        goto failed;
-
-    // it should fail as it has no buffer
-    if (GetTokenInformation(process_token, TokenUser, NULL, 0, &n))
-        goto failed;
-
-    if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
-        goto failed;
-
-    token_user = (TOKEN_USER*) alloca(n);
-    if (!GetTokenInformation(process_token, TokenUser, token_user, n, &n))
-        goto failed;
-
-    psid = token_user->User.Sid;
-    if (!IsValidSid (psid))
-        goto failed;
-
-    if (!ConvertSidToStringSid(psid, &stringsid))
-        goto failed;
-
-#ifdef UNICODE
-    size_t sidlen = wcslen(stringsid);
-    for (size_t i = 0; i < sidlen; ++i)
-        ds_cat_char(id, (char) stringsid[i]);
-#else
-    ds_cat(id, stringsid);
-#endif
-
-    LocalFree(stringsid);
-
-failed:
-    if (process_token != NULL)
-        CloseHandle(process_token);
-}
-
-#else
-
 #include <unistd.h>
 #include <sys/types.h>
 
 static void LocalId(d_String* id)
 {
+#ifdef NUTTX
+    int uid = -1;
+#else
     uid_t uid = geteuid();
+#endif
     ds_cat_f(id, "%d", (int) uid);
 }
-
-#endif
 
 /* -------------------------------------------------------------------------- */
 
