@@ -26,6 +26,13 @@
 #define ADBUS_LIBRARY
 #include "misc.h"
 
+#ifdef NUTTX
+#define UINT8_C(x) x
+#define UINT16_C(x) x
+#define UINT32_C(x) x ## UL
+#define UINT64_C(x) x ## ULL
+#endif
+
 /** Skip over a single complete type.
  * \relates adbus_Iterator
  */
