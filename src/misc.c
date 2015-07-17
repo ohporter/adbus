@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 
 
@@ -68,10 +68,6 @@ void adbusI_dolog(const char* format, ...)
     ds_free(&log);
 }
 
-#ifdef _WIN32
-#   define alloca _alloca
-#endif
-
 void adbusI_addheader(d_String* str, const char* format, ...)
 {
     size_t begin = ds_size(str);
@@ -81,7 +77,7 @@ void adbusI_addheader(d_String* str, const char* format, ...)
     va_end(ap);
 
     size_t hsize = ds_size(str) - begin;
-    char* spaces = (char*) alloca(hsize);
+    char* spaces = (char*) malloc(hsize);
     memset(spaces, ' ', hsize);
 
     size_t i = 0;
@@ -91,6 +87,8 @@ void adbusI_addheader(d_String* str, const char* format, ...)
         }
         ++i;
     }
+
+    free(spaces);
 }
 
 // ----------------------------------------------------------------------------
