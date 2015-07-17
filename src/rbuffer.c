@@ -525,7 +525,7 @@ INLINE void Append64(adbus_Buffer* b, uint64_t v)
     *dest = v;
 }
 
-#define SIG(b, s) (assert(*b->sigp == s), b->sigp++)
+#define SIG(b, s) ((assert(*b->sigp == s)), b->sigp++)
 
 /** Called to end a series of serialised arguments.
  *  \relates adbus_Buffer
