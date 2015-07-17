@@ -26,23 +26,19 @@
 #define ADBUS_LIBRARY
 #include "misc.h"
 
-#ifdef _WIN32
-#   include <Winsock2.h>
-#   include <WS2tcpip.h>
-#   include <windows.h>
+#ifdef NUTTX
+#   include <arpa/inet.h>
 #else
-#   include <sys/socket.h>
-#   include <sys/types.h>
 #   include <sys/un.h>
-#   include <netdb.h>
-#   include <unistd.h>
 #endif
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netdb.h>
+#include <unistd.h>
 
 #include <string.h>
 
-#ifndef _WIN32
-#   define closesocket(x) close(x)
-#endif
+#define closesocket(x) close(x)
 
 /** \defgroup adbus_Socket adbus_Socket
  *  \brief Helper functions for connecting BSD sockets.
@@ -108,9 +104,10 @@ static void ParseFields(struct Fields* f, char* bstr, size_t size)
 
 static adbus_Socket ConnectTcp(struct Fields* f)
 {
+    adbus_Socket sfd = ADBUS_SOCK_INVALID;
+#ifndef NUTTX
     struct addrinfo hints;
     struct addrinfo *result, *rp;
-    adbus_Socket sfd = ADBUS_SOCK_INVALID;
 
     /* Obtain address(es) matching host/port */
 
@@ -144,6 +141,21 @@ static adbus_Socket ConnectTcp(struct Fields* f)
     }
 
     freeaddrinfo(result);           /* No longer needed */
+#else
+    struct sockaddr_in myaddr;
+
+    sfd = socket(PF_INET, SOCK_STREAM, 0);
+        if (sfd == ADBUS_SOCK_INVALID)
+            return sfd;
+
+    myaddr.sin_family   = AF_INET;
+    myaddr.sin_port     = htons(9999);
+    myaddr.sin_addr.s_addr     = htonl(0x0a000001);
+    if (connect(sfd, (struct sockaddr *)&myaddr, sizeof(struct sockaddr_in)) < 0) {
+        closesocket(sfd);
+        sfd = ADBUS_SOCK_INVALID;
+    }
+#endif
 
     return sfd;
 }
@@ -152,9 +164,10 @@ static adbus_Socket ConnectTcp(struct Fields* f)
 
 static adbus_Socket BindTcp(struct Fields* f)
 {
+    adbus_Socket sfd = ADBUS_SOCK_INVALID;
+#ifndef NUTTX
     struct addrinfo hints;
     struct addrinfo *result, *rp;
-    adbus_Socket sfd = ADBUS_SOCK_INVALID;
 
     /* Obtain address(es) matching host/port */
 
@@ -189,13 +202,28 @@ static adbus_Socket BindTcp(struct Fields* f)
     }
 
     freeaddrinfo(result);           /* No longer needed */
+#else
+    struct sockaddr_in myaddr;
+
+    sfd = socket(PF_INET, SOCK_STREAM, 0);
+        if (sfd == ADBUS_SOCK_INVALID) 
+            return sfd;
+
+    myaddr.sin_family   = AF_INET;
+    myaddr.sin_port     = htons(9999);
+    myaddr.sin_addr.s_addr     = htonl(0x0a000001);
+    if (bind(sfd, (struct sockaddr *)&myaddr, sizeof(struct sockaddr_in)) < 0) {
+        closesocket(sfd);
+        sfd = ADBUS_SOCK_INVALID;
+    }
+#endif
 
     return sfd;
 }
 
 // ----------------------------------------------------------------------------
 
-#ifndef _WIN32
+#ifndef NUTTX
 #define UNIX_PATH_MAX 108
 static adbus_Socket ConnectAbstract(struct Fields* f)
 {
@@ -280,7 +308,6 @@ static adbus_Socket BindUnix(struct Fields* f)
 
     return sfd;
 }
-
 #endif
 
 // ----------------------------------------------------------------------------
@@ -295,32 +322,6 @@ static adbus_Bool CopyEnv(const char* env, char* buf, size_t sz)
     buf[sz - 1] = '\0';
     return 1;
 }
-
-#ifdef _WIN32
-static adbus_Bool CopySharedMem(const wchar_t* name, char* buf, size_t sz)
-{
-    HANDLE map = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL, PAGE_READONLY, 0, sz - 1, name);
-    if (map == INVALID_HANDLE_VALUE)
-        return 0;
-
-    if (GetLastError() != ERROR_ALREADY_EXISTS)
-    {
-        CloseHandle(map);
-        return 0;
-    }
-
-    void* view = MapViewOfFile(map, FILE_MAP_READ, 0, 0, sz - 1);
-    if (view)
-        CopyMemory(buf, view, sz - 1);
-
-    UnmapViewOfFile(view);
-    CloseHandle(map);
-
-    buf[sz - 1] = '\0';
-
-    return 1;
-}
-#endif
 
 static adbus_Bool CopyString(const char* str, char* buf, size_t sz)
 {
@@ -499,7 +500,7 @@ adbus_Socket adbus_sock_connect_s(
 
     adbus_Socket sfd = ADBUS_SOCK_INVALID;
 
-#ifdef _WIN32
+#ifdef NUTTX
     if (f.proto && strcmp(f.proto, "tcp") == 0 && f.host && f.port) {
         sfd = ConnectTcp(&f);
     }
@@ -557,7 +558,7 @@ adbus_Socket adbus_sock_bind_s(
 
     adbus_Socket sfd = ADBUS_SOCK_INVALID;
 
-#ifdef _WIN32
+#ifdef NUTTX
     if (f.proto && strcmp(f.proto, "tcp") == 0 && f.host && f.port) {
         sfd = BindTcp(&f);
     }
