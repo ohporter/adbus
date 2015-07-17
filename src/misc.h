@@ -101,7 +101,9 @@
 #define NEW_ARRAY(TYPE, NUM) ((TYPE*) calloc(NUM, sizeof(TYPE)))
 #define NEW(TYPE) ((TYPE*) calloc(1, sizeof(TYPE)))
 #define ZERO(p) memset(p, 0, sizeof(*p))
+#ifndef UNUSED
 #define UNUSED(x) ((void) (x))
+#endif
 
 // ----------------------------------------------------------------------------
 
