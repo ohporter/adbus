@@ -26,7 +26,7 @@
 #define ADBUS_LIBRARY
 #include "message.h"
 
-#include "string.h"
+#include "dstring.h"
 
 #include <assert.h>
 #include <stdint.h>

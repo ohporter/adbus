@@ -4,8 +4,8 @@
 #define DMEM_STRING_H
 
 #include "common.h"
-
 #include "vector.h"
+
 #include <string.h>
 #include <stdarg.h>
 

@@ -5,6 +5,7 @@ libucdbus_la_SOURCES = 	auth.c			\
 			client-service.c	\
 			connection.c		\
 			debug.c			\
+			dstring.c		\
 			interface.c		\
 			istring.c		\
 			match.c			\
@@ -19,7 +20,6 @@ libucdbus_la_SOURCES = 	auth.c			\
 			sha1.c			\
 			signal.c		\
 			socket.c		\
-			state.c			\
-			string.c
+			state.c
 libucdbus_la_LDFLAGS = -version-info 0:1:0
 AM_CPPFLAGS=-I$(top_srcdir)/include/ucdbus

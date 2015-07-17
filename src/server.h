@@ -30,7 +30,7 @@
 #include "hash.h"
 #include "list.h"
 #include "queue.h"
-#include "string.h"
+#include "dstring.h"
 #include "vector.h"
 
 #include <adbus.h>

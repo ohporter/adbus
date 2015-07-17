@@ -29,7 +29,7 @@
 #include "message.h"
 
 #include "vector.h"
-#include "string.h"
+#include "dstring.h"
 
 #include <assert.h>
 

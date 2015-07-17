@@ -27,7 +27,7 @@
 #define ADBUS_LIBRARY
 #include "misc.h"
 
-#include "string.h"
+#include "dstring.h"
 
 /** \struct adbus_Proxy
  *

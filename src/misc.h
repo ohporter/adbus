@@ -36,7 +36,7 @@
 #include <adbus.h>
 
 #include "hash.h"
-#include "string.h"
+#include "dstring.h"
 
 #include <string.h>
 

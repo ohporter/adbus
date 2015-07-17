@@ -28,7 +28,7 @@
 #include "misc.h"
 #include "hash.h"
 #include "vector.h"
-#include "string.h"
+#include "dstring.h"
 #include "list.h"
 #include <setjmp.h>
 #include <stdint.h>

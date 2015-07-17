@@ -27,7 +27,7 @@
 #include "connection.h"
 #include "interface.h"
 
-#include "string.h"
+#include "dstring.h"
 
 /** \struct adbus_CbData
  *  \brief Data structure used for message callbacks.

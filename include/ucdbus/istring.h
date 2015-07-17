@@ -3,7 +3,7 @@
 #ifndef DMEM_ISTRING_H
 #define DMEM_ISTRING_H
 
-#include "string.h"
+#include "dstring.h"
 
 #ifdef __cplusplus
 extern "C"{
