@@ -159,11 +159,11 @@ adbus_MsgFactory* adbus_sig_msg(adbus_Signal* s)
 void adbus_sig_emit(adbus_Signal* s)
 {
     adbus_MsgFactory* m = s->message;
-    adbus_Interface* i = s->member->interface;
+    adbus_Interface* iface = s->member->interface;
 
     adbus_msg_end(m);
     adbus_msg_setmember(m, s->member->name.str, s->member->name.sz);
-    adbus_msg_setinterface(m, i->name.str, i->name.sz);
+    adbus_msg_setinterface(m, iface->name.str, iface->name.sz);
 
     for (size_t i = 0; i < dv_size(&s->binds); i++) {
         struct Bind* b = &dv_a(&s->binds, i);
