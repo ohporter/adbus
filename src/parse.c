@@ -278,6 +278,7 @@ int adbus_parse(adbus_Message* m, char* data, size_t size)
     while (adbus_iter_inarray(&i, &a)) {
         const uint8_t* code;
         adbus_IterVariant v;
+        v.origsig = 0;
         if (    adbus_iter_beginstruct(&i) 
             ||  adbus_iter_u8(&i, &code)
             ||  adbus_iter_beginvariant(&i, &v))
